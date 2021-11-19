@@ -9,26 +9,45 @@ namespace AkkaDemo01.Unit1.DoThis
 {
     public class ConsoleReaderActor : UntypedActor
     {
-        private IActorRef _consoleWriteActor;
+        private readonly IActorRef _consoleValidatorActor;
         private const string ExitCommand = "exit";
+        public const string StartCommand = "start";
 
-        public ConsoleReaderActor(IActorRef consoleWriteActor)
+        public ConsoleReaderActor(IActorRef consoleValidatorActor)
         {
-            _consoleWriteActor = consoleWriteActor;
+            _consoleValidatorActor = consoleValidatorActor;
         }
         protected override void OnReceive(object message)
         {
-            var read = Console.ReadLine();
-            if (!string.IsNullOrEmpty(read) &&
-                string.Equals(read, ExitCommand, StringComparison.OrdinalIgnoreCase))
+            if (message.Equals(StartCommand))
             {
-                // shut down the system (acquire handle to system via
-                // this actors context)
+                DoPrintInstructions();
+            }
+            GetAndValidateInput();
+        }
+        #region Internal methods
+        private void DoPrintInstructions()
+        {
+            Console.WriteLine("Write whatever you want into the console!");
+            Console.WriteLine("Some entries will pass validation, and some won't...\n\n");
+            Console.WriteLine("Type 'exit' to quit this application at any time.\n");
+        }
+
+        /// <summary>
+        /// Reads input from console, validates it, then signals appropriate response
+        /// (continue processing, error, success, etc.).
+        /// </summary>
+
+        private void GetAndValidateInput()
+        {
+            var message = Console.ReadLine();
+            if (string.Equals(message, ExitCommand, StringComparison.OrdinalIgnoreCase))
+            {
                 Context.System.Terminate();
                 return;
             }
-            _consoleWriteActor.Tell(read);
-            Self.Tell("continue");
+            _consoleValidatorActor.Tell(message);
         }
+        #endregion
     }
 }

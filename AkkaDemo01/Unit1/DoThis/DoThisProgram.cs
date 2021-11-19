@@ -16,15 +16,17 @@ namespace AkkaDemo01.Unit1.DoThis
             MyActorSystem = ActorSystem.Create("MyActorSystem");
 
             PrintInstructions();
+            
 
-            var consoleWriterActor = MyActorSystem.ActorOf(Props.Create(() => new ConsoleWriterActor()), "writer");
+            var consoleWriterActor = MyActorSystem.ActorOf(Props.Create<ConsoleWriterActor>(), "writer");
 
-            var consoleReaderActor = MyActorSystem.ActorOf(Props.Create(() =>
-                new ConsoleReaderActor(consoleWriterActor)), "reader");
+            var validatorActor = MyActorSystem.ActorOf(Props.Create<ValidationActor>(consoleWriterActor),"validation");
+
+            var consoleReaderActor = MyActorSystem.ActorOf(Props.Create<ConsoleReaderActor>(validatorActor),"reader");
 
 
 
-            consoleReaderActor.Tell("start");
+            consoleReaderActor.Tell(ConsoleReaderActor.StartCommand);
             MyActorSystem.WhenTerminated.Wait();
         }
 
