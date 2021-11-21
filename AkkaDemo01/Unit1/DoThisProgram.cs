@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Akka.Actor;
-namespace AkkaDemo01.Unit1.DoThis
+using AkkaDemo01.Unit1.DoThis;
+using AkkaDemo01.Unit1.WinTail;
+
+namespace AkkaDemo01.Unit1
 {
     public static class DoThisProgram
     {
@@ -16,13 +15,23 @@ namespace AkkaDemo01.Unit1.DoThis
             MyActorSystem = ActorSystem.Create("MyActorSystem");
 
             PrintInstructions();
-            
-
             var consoleWriterActor = MyActorSystem.ActorOf(Props.Create<ConsoleWriterActor>(), "writer");
 
-            var validatorActor = MyActorSystem.ActorOf(Props.Create<ValidationActor>(consoleWriterActor),"validation");
+            // make tailCoordinatorActor
+            var tailCoordinatorProps = Props.Create(() => new TailCoordinatorActor());
+            var tailCoordinatorActor = MyActorSystem.ActorOf(tailCoordinatorProps,
+                "tailCoordinatorActor");
 
-            var consoleReaderActor = MyActorSystem.ActorOf(Props.Create<ConsoleReaderActor>(validatorActor),"reader");
+
+            var fileValidatorActorProps = Props.Create(() =>
+                new FileValidatorActor(consoleWriterActor, tailCoordinatorActor));
+            var validationActor = MyActorSystem.ActorOf(fileValidatorActorProps,
+                "validationActor");
+
+
+
+
+            var consoleReaderActor = MyActorSystem.ActorOf(Props.Create<ConsoleReaderActor>(validationActor), "reader");
 
 
 

@@ -5,6 +5,7 @@ using AkkaDemo01.Actors.Demo;
 using AkkaDemo01.Actors.Game;
 using AkkaDemo01.Actors.Game.Messages;
 using AkkaDemo01.Actors.Game.Model;
+using AkkaDemo01.Unit1;
 using AkkaDemo01.Unit1.DoThis;
 
 namespace AkkaDemo01
