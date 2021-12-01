@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Akka.Actor;
 using AkkaDemo01.Actors.Demo;
@@ -14,38 +16,37 @@ namespace AkkaDemo01
     {
         static async Task Main(string[] args)
         {
-            DoThisProgram.Main();
-        }
 
-        #region MutliThread sample
+            var input = "aaabzzzaafff";
+            var output = GetCompressedString(input);
+            Console.WriteLine(output);
+            // DoThisProgram.Main();
+        }//
 
-        static void BankAccountSample()
+        #region algoritm
+
+        static string GetCompressedString(string raw)
         {
-            var bankProgram = new BankProgram();
-            bankProgram.Run().Wait();
-            Console.ReadLine();
-        }
-
-        #endregion
-
-        #region actor sample
-        static void ActorSample()
-        {
-            var system = ActorSystem.Create("AkkaDemo01");
-            var gameId = Guid.NewGuid();
-            var gameActorRef = system.ActorOf(GameActor.Props(gameId), $"Game-{gameId}");
-            Console.WriteLine(gameActorRef.Path);
-            var startGameMessage = new StartGame();
-
-            var putBone = new PutBone() { Left = 0, Right = 0 };
-
-
-            gameActorRef.Tell(putBone);
-            //var gameState = await gameActorRef.Ask<BoardState>(putBone);
-            //gameActorRef.Tell(startGameMessage);
-
-
-            Console.ReadLine();
+            string result = "";
+            foreach (var c in raw.ToCharArray())
+            {
+                var digitChar = result[result.Length - 1];
+                if (char.IsDigit(digitChar))
+                {
+                    int digit = Convert.ToInt16(c);
+                    if (c == result[result.Length - 2])
+                    {
+                        digit++;
+                        result.Remove(result.Length - 1);
+                        result += digit;
+                    }
+                }
+                else
+                {
+                    result += $"{c}1";
+                }
+            }
+            return "";
         }
 
 

@@ -5,11 +5,11 @@ using AkkaDemo01.Unit1.WinTail;
 
 namespace AkkaDemo01.Unit1
 {
-    public static class DoThisProgram
+    public  class DoThisProgram
     {
         public static ActorSystem MyActorSystem;
 
-        public static void Main()
+        public  void Main()
         {
 
             MyActorSystem = ActorSystem.Create("MyActorSystem");
