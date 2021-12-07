@@ -10,8 +10,10 @@ namespace OneZeroOneDominoTests
         [Fact]
         public void Test1()
         {
-            var subject =
-                this.Sys.ActorOf(Props.Create(()=>new GameManagerActor()));
+            //var gameManagerActorRef =
+            //    this.Sys.ActorOf(Props.Create(()=>new GameManagerActor()));
+            //gameManagerActorRef.Tell("hello");
+            //var result=ExpectMsg<GameManagerActor>()
 
         }
     }

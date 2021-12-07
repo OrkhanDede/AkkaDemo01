@@ -10,24 +10,45 @@ namespace OneZeroOneDomino.Actors.Game
     {
         private readonly Dictionary<string, IActorRef> _players;
         private readonly string _id;
-
+        private bool _gameHasStarted=false;
+        private int _order { get; }
         public GameActor(string id)
         {
             _id = id;
             _players = new Dictionary<string, IActorRef>();
-            Receive<PlayerJoinToGame>(PlayerJoin);
+            _order = 0;
+            Receive<StartGame>(StartGame);
             Receive<PlayerLeaveToGame>(PlayerLeave);
+            Receive<ShuffledBone>(ShuffledBone);
         }
-        private void PlayerJoin(PlayerJoinToGame message)
+
+        private void ShuffledBone(ShuffledBone message)
         {
-            if(_players.Count==4) return;
-            if (!_players.ContainsKey(message.PlayerId))
+            
+            //butun userlere suffle ile elaqeli event gonder
+            throw new NotImplementedException();
+        }
+
+        private void ShuffleBone()
+        {
+
+        }
+
+        private void StartGame(StartGame message)
+        {
+            if (message.Players.Count != 4)
             {
-                var playerId = message.PlayerId;
-                var playerActor=
-                    Context.ActorOf(Props.Create<PlayerActor>(() => new PlayerActor(playerId, $"Player-{playerId}")));
-                _players[playerId] = playerActor;
+                return;
             }
+            var players = message.Players;
+            foreach (var playerInfoData in players)
+            {
+                var playerActorRef =
+                    Context.ActorOf(Props.Create(() => new PlayerActor(playerInfoData.Id, playerInfoData.UserName)));
+                _players[playerInfoData.Id] = playerActorRef;
+            }
+
+            _gameHasStarted = true;
         }
         private void PlayerLeave(PlayerLeaveToGame message)
         {
@@ -36,11 +57,6 @@ namespace OneZeroOneDomino.Actors.Game
                 var playerActor = _players[message.PlayerId];
                 playerActor.GracefulStop(TimeSpan.FromSeconds(1));
             }
-        }
-
-        private void StartGame(StartGame message)
-        { 
-            //daslari qarisdir ve daslari oyuncular arasinda bolusdur.
         }
     }
 }

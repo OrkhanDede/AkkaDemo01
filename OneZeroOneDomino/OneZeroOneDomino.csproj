@@ -7,7 +7,4 @@
 	<ItemGroup>
 		<PackageReference Include="Akka" Version="1.4.27" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Actors\Player\Messages\" />
-	</ItemGroup>
 </Project>
